@@ -9,7 +9,11 @@ namespace Facturacion.Application.Repository
 {
     public interface IUnitOfWork: IDisposable
     {
-       public IRepositoryGeneric<Cliente> Client { get; }
+       public IRepositoryGeneric<Client> Client { get; }
+        public IRepositoryGeneric<Invoice> Invoice { get; }
+        public IRepositoryGeneric<InvoiceDetail> InvoiceDetails { get; }
+        public IRepositoryGeneric<Product> Product { get; }
+        public IRepositoryGeneric<Category> Category { get; }
 
         Task<int> Save();
         

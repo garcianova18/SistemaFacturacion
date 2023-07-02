@@ -17,10 +17,6 @@ namespace Facturacion.Application.Repository
         void Delete(TEntity entity);
         Task<bool> Exists(Expression<Func<TEntity, bool>> filters = null);
         Task<int> ExistsUpdate(Expression<Func<TEntity, bool>> filters = null);
-
-
-        Task<bool> Save();
-
         
     }
 }

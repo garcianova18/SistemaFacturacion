@@ -13,9 +13,9 @@ namespace Facturacion.Domain.DTOs
 
         public bool IsSuccess { get; set; } = true;
 
-        public object Result { get; set; }
+        public object Result { get; set; } = null;
 
-        public List<string> ErrorMesseges { get; set; }
+        public List<string> ErrorMesseges { get; set; } = null;
 
     }
 }

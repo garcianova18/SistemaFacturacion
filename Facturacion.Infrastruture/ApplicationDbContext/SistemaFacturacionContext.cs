@@ -17,130 +17,130 @@ namespace Facturacion.Infrastruture.ApplicationDbContext
         {
         }
 
-        public virtual DbSet<Categorium> Categoria { get; set; } = null!;
-        public virtual DbSet<Cliente> Clientes { get; set; } = null!;
-        public virtual DbSet<DetalleFactura> DetalleFacturas { get; set; } = null!;
-        public virtual DbSet<Factura> Facturas { get; set; } = null!;
-        public virtual DbSet<Producto> Productos { get; set; } = null!;
+        public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<Client> Clients { get; set; }
+        public virtual DbSet<Invoice> Invoices { get; set; }
+        public virtual DbSet<InvoiceDetail> InvoiceDetails { get; set; }
+        public virtual DbSet<Product> Products { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server= DESKTOP-BP6RUJQ\\SQLEXPRESS; Database =SistemaFacturacion; User Id=sa; Password=12345; Trusted_Connection = true; TrustServerCertificate=true");
-            }
-        }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Categorium>(entity =>
+            modelBuilder.Entity<Category>(entity =>
             {
-                entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+                entity.ToTable("Category");
 
-                entity.Property(e => e.Nombre)
+                entity.Property(e => e.DateCreate).HasColumnType("datetime");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
                     .HasMaxLength(100)
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<Cliente>(entity =>
+            modelBuilder.Entity<Client>(entity =>
             {
-                entity.ToTable("Cliente");
-
-                entity.Property(e => e.Apellidos)
-                    .HasMaxLength(60)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Correo)
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
+                entity.ToTable("Client");
 
                 entity.Property(e => e.Direccion)
+                    .IsRequired()
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Dni)
+                    .IsRequired()
                     .HasMaxLength(40)
                     .IsUnicode(false)
                     .HasColumnName("DNI");
 
-                entity.Property(e => e.Nombre)
+                entity.Property(e => e.Email)
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Telefono)
+                entity.Property(e => e.FirstName)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LastName)
+                    .IsRequired()
+                    .HasMaxLength(60)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Phone)
+                    .IsRequired()
                     .HasMaxLength(14)
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<DetalleFactura>(entity =>
+            modelBuilder.Entity<Invoice>(entity =>
             {
-                entity.ToTable("DetalleFactura");
+                entity.ToTable("Invoice");
 
-                entity.Property(e => e.Descuento).HasColumnType("decimal(16, 2)");
-
-                entity.Property(e => e.Price).HasColumnType("decimal(16, 2)");
-
-                entity.Property(e => e.Total).HasColumnType("decimal(16, 2)");
-
-                entity.HasOne(d => d.IdFacturaNavigation)
-                    .WithMany(p => p.DetalleFacturas)
-                    .HasForeignKey(d => d.IdFactura)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_DetalleFactura_Factura");
-
-                entity.HasOne(d => d.IdProductoNavigation)
-                    .WithMany(p => p.DetalleFacturas)
-                    .HasForeignKey(d => d.IdProducto)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_DetalleFactura_Producto");
-            });
-
-            modelBuilder.Entity<Factura>(entity =>
-            {
-                entity.ToTable("Factura");
-
-                entity.Property(e => e.Fecha).HasColumnType("datetime");
+                entity.Property(e => e.DateCreate).HasColumnType("datetime");
 
                 entity.Property(e => e.Itbis)
                     .HasColumnType("decimal(16, 2)")
                     .HasColumnName("ITBIS");
 
-                entity.Property(e => e.Nfactura)
+                entity.Property(e => e.Ninvoice)
+                    .IsRequired()
                     .HasMaxLength(10)
                     .IsUnicode(false)
-                    .HasColumnName("NFactura");
+                    .HasColumnName("NInvoice");
 
                 entity.Property(e => e.SubTotal).HasColumnType("decimal(16, 2)");
 
                 entity.Property(e => e.Total).HasColumnType("decimal(16, 2)");
 
-                entity.HasOne(d => d.IdClienteNavigation)
-                    .WithMany(p => p.Facturas)
-                    .HasForeignKey(d => d.IdCliente)
+                entity.HasOne(d => d.Client)
+                    .WithMany(p => p.Invoices)
+                    .HasForeignKey(d => d.IdClient)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Factura_Cliente");
             });
 
-            modelBuilder.Entity<Producto>(entity =>
+            modelBuilder.Entity<InvoiceDetail>(entity =>
             {
-                entity.ToTable("Producto");
+                entity.Property(e => e.Discount).HasColumnType("decimal(16, 2)");
 
-                entity.Property(e => e.Descriccion)
+                entity.Property(e => e.Price).HasColumnType("decimal(16, 2)");
+
+                entity.Property(e => e.Total).HasColumnType("decimal(16, 2)");
+
+                entity.HasOne(d => d.Invoice)
+                    .WithMany(p => p.InvoiceDetails)
+                    .HasForeignKey(d => d.IdInvoice)
+                    .HasConstraintName("FK_DetalleFactura_Factura");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.InvoiceDetails)
+                    .HasForeignKey(d => d.IdProduct)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_DetalleFactura_Producto");
+            });
+
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.ToTable("Product");
+
+                entity.Property(e => e.DateCreate).HasColumnType("datetime");
+
+                entity.Property(e => e.Description)
                     .HasMaxLength(200)
                     .IsUnicode(false);
 
-                entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
-
-                entity.Property(e => e.Nombre)
+                entity.Property(e => e.Name)
+                    .IsRequired()
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Precio).HasColumnType("decimal(16, 2)");
+                entity.Property(e => e.Price).HasColumnType("decimal(16, 2)");
 
-                entity.HasOne(d => d.IdCategoriaNavigation)
-                    .WithMany(p => p.Productos)
-                    .HasForeignKey(d => d.IdCategoria)
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.Products)
+                    .HasForeignKey(d => d.IdCategory)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Categoria_Producto");
             });

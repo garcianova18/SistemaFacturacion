@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Facturacion.Domain.Models
 {
-    public partial class DetalleFactura
+    public partial class InvoiceDetail
     {
         public int Id { get; set; }
         public int IdInvoice { get; set; }
@@ -13,7 +13,7 @@ namespace Facturacion.Domain.Models
         public decimal Total { get; set; }
         public decimal Discount { get; set; }
 
-        public virtual Invoice Invoice { get; set; } = null!;
-        public virtual Product Product { get; set; } = null!;
+        public virtual Invoice Invoice { get; set; }
+        public virtual Product Product { get; set; }
     }
 }

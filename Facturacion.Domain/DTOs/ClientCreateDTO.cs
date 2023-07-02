@@ -10,30 +10,26 @@ namespace Facturacion.Domain.DTOs
     public class ClientCreateDTO
     {
         [Required(ErrorMessage ="El {0} es obligatorio")]
-        [Display(Name ="Nombre")]
+        
         [StringLength(50)]
-        public string Nombre { get; set; } = null!;
+        public string FirstName { get; set; } = null!;
 
         [Required(ErrorMessage = "El Campo {0} es obligatorio")]
-        [Display(Name = "Apellidos")]
         [StringLength(60)]
-        public string Apellidos { get; set; }
+        public string LastName { get; set; }
 
         [Required(ErrorMessage = "El {0} es obligatorio")]
-        [Display(Name = "Direccion")]
         [StringLength(100)]
         public string Direccion { get; set; } = null!;
 
         [Required(ErrorMessage = "El {0} es obligatorio")]
-        [Display(Name = "Telefono")]
         [DataType(DataType.PhoneNumber)]
-        public string Telefono { get; set; } = null!;
+        public string Phone { get; set; } = null!;
 
         [Required(ErrorMessage = "El {0} es obligatorio")]
-        [Display(Name = "Correo")]
         [DataType(DataType.EmailAddress)]
         [StringLength(50)]
-        public string? Correo { get; set; }
+        public string Email { get; set; }
 
         public string Dni { get; set; }
     }

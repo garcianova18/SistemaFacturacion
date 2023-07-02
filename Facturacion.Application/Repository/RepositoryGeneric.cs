@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Facturacion.Domain.Models;
 using Facturacion.Infrastruture.ApplicationDbContext;
 using Microsoft.EntityFrameworkCore;
 
@@ -69,12 +70,10 @@ namespace Facturacion.Application.Repository
 
         public async Task<List<TEntity>> GetAll()
         {
-
-            var client = await _entitites.ToListAsync();
-
-            return client;
             
-            
+
+            return await _entitites.ToListAsync();
+
         }
 
         public async Task<TEntity> GetByid(int id)
@@ -87,8 +86,9 @@ namespace Facturacion.Application.Repository
             try
             {
                 _context.Entry(entity).State = EntityState.Modified;
+             
 
-               
+
             }
             catch (Exception)
             {
@@ -100,14 +100,6 @@ namespace Facturacion.Application.Repository
         }
 
        
-        
-
-        public async Task<bool> Save()
-        {
-
-            return await _context.SaveChangesAsync() > 0 ? true : false;
-        }
-
        public async Task<int> ExistsUpdate(Expression<Func<TEntity, bool>> filters =null)
         {
             if (filters is null)
@@ -119,5 +111,9 @@ namespace Facturacion.Application.Repository
 
 
         }
+
+      
+
+
     }
 }

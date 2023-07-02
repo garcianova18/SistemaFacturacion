@@ -92,31 +92,31 @@ namespace Facturacion.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApiResponse>> Post([FromBody]ClientCreateDTO clientDTO)
+        public async Task<ActionResult<ApiResponse>> Post([FromBody]ClientCreateDTO ClientDTO)
         {
             try
             {
-                if (clientDTO is null)
+                if (ClientDTO is null)
                 {
                     return BadRequest();
                 }
 
                 //Verificar si existe un cliente con el DNI enviado
-                var exists = await _unitOfWork.Client.Exists(c => c.Dni.Equals(clientDTO.Dni));
-                if (exists)
+                var ExistsClient = await _unitOfWork.Client.Exists(c => c.Dni.Equals(ClientDTO.Dni));
+                if (ExistsClient)
                 {
                     return BadRequest("El cliente ya existe");
                 }
 
-                var client = _mapper.Map<Cliente>(clientDTO);
+                var Client = _mapper.Map<Client>(ClientDTO);
 
-                await _unitOfWork.Client.Add(client);
-                await _unitOfWork.Client.Save();
+                await _unitOfWork.Client.Add(Client);
+                await _unitOfWork.Save();
 
-                response.Result = clientDTO;
+                response.Result = ClientDTO;
                 response.StatusCode = HttpStatusCode.Created;   
 
-                return CreatedAtRoute("GetClient", new { id = client.Id }, response.Result);
+                return CreatedAtRoute("GetClient", new { id = Client.Id }, response.Result);
             }
             catch (Exception ex)
             {
@@ -160,9 +160,9 @@ namespace Facturacion.RestApi.Controllers
                     return NotFound("Este registro no existe en la DB");
                 }
 
-                var cliente = _mapper.Map<Cliente>(clientDTO);
+                var cliente = _mapper.Map<Client>(clientDTO);
                       _unitOfWork.Client.Update(cliente);
-                await _unitOfWork.Client.Save();
+                await _unitOfWork.Save();
 
                 response.IsSuccess = true;
                 response.StatusCode = HttpStatusCode.NoContent;
@@ -206,10 +206,10 @@ namespace Facturacion.RestApi.Controllers
                 }
 
                 _unitOfWork.Client.Delete(ExistsClient);
-                await _unitOfWork.Client.Save();
+                await _unitOfWork.Save();
 
                 response.StatusCode = HttpStatusCode.NoContent;
-
+                return Ok(response);
             }
             catch (Exception ex)
             {

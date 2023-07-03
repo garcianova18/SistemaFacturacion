@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 
@@ -19,6 +20,10 @@ namespace Facturacion.Domain.DTOs
         [Required(ErrorMessage = "El Campo {0} es obligatorio")]
         [MinLength(1,ErrorMessage = "Debes enviar por lo menos un detalle de ventas")]
         public  ICollection<InvoiceDetailsCreateDTO> InvoiceDetails { get; set; }
+
+
+        [JsonIgnore]
+        public int IdUser { get; set; } = 1;
     }
 
   

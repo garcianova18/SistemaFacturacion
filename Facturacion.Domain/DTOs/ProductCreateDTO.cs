@@ -15,13 +15,13 @@ namespace Facturacion.Domain.DTOs
         public string Name { get; set; } 
         public string Descriccion { get; set; }
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = " {0} debe de ser mayor a 0}")]
+        [Range(1, double.MaxValue, ErrorMessage = " {0} debe de ser mayor a 0}")]
         public decimal Price { get; set; }
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = " {0} debe de ser mayor a 0}")]
+        [Range(1, double.MaxValue, ErrorMessage = " {0} debe de ser mayor a 0}")]
         public int IdCategory { get; set; }
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = " {0} debe de ser mayor a 0}")]
+        [Range(1, double.MaxValue, ErrorMessage = " {0} debe de ser mayor a 0}")]
         public int Stock { get; set; }
 
         [JsonIgnore]

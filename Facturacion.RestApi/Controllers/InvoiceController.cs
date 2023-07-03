@@ -203,32 +203,21 @@ namespace Facturacion.RestApi.Controllers
                     return BadRequest(response);
                 }
 
-                bool existsProduct = false;
-                int idnotvalid = 0;
+                var invoiceMapper = _mapper.Map<Invoice>(invoiceCreateDTO);
+
                 //Verificar si existe todos los Productos con los id enviado 
-                foreach (var item in invoiceCreateDTO.InvoiceDetails)
-                {
-                   
-                   existsProduct  =  await _unitOfWork.Product.Exists(d => d.Id == item.IdProduct);
 
-                    idnotvalid = item.IdProduct;
-                    if (existsProduct is false)
-                    {
-                        break;
-                    }
-                }
+                var existsProduct = await _invoiceServices.ExistsProduct(invoiceMapper);
 
-                
-                if (!existsProduct)
+                if (!existsProduct.IsSuccess)
                 {
                     response.IsSuccess = false;
                     response.StatusCode = HttpStatusCode.NotFound;
-                    response.Message = $"El Producto con id {idnotvalid} no existe";
+                    response.Message = $"El Producto con id {existsProduct.Id} no existe";
                     return NotFound(response);
                 }
                
 
-                var invoiceMapper = _mapper.Map<Invoice>(invoiceCreateDTO);
 
                 //Realizar las operaciones de la factura y de los detalles
                 var invoice = await _invoiceServices.GetTotalSubtotalTax(invoiceMapper);
@@ -287,7 +276,33 @@ namespace Facturacion.RestApi.Controllers
                     return NotFound(response);
                 }
 
+              
+
                 var InvoiceMapper = _mapper.Map<Invoice>(invoiceUpdateDTO);
+
+
+                //Verificar si existe todos los Productos con los id enviado 
+                var existsProduct = await _invoiceServices.ExistsProduct(InvoiceMapper);
+
+                if (!existsProduct.IsSuccess)
+                {
+                    response.IsSuccess = false;
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    response.Message = $"El Producto con id {existsProduct.Id} no existe";
+                    return NotFound(response);
+                }
+
+                //Verificar si existe todos los Productos con los id enviado 
+                var existsDetails = await _invoiceServices.ExistsDetails(InvoiceMapper);
+
+                if (!existsDetails.IsSuccess)
+                {
+                    response.IsSuccess = false;
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    response.Message = $"El detalle con id {existsProduct.Id} no existe";
+                    return NotFound(response);
+                }
+
 
                 //Realizar las operaciones de la factura y de los detalles
                 var invoice = await _invoiceServices.GetTotalSubtotalTax(InvoiceMapper);
@@ -295,9 +310,11 @@ namespace Facturacion.RestApi.Controllers
 
                 
                 _unitOfWork.Invoice.Update(invoice);
+                
                 await _unitOfWork.Save();
 
                 response.StatusCode = HttpStatusCode.NoContent;
+                response.Message = "El registro fue actualizado";
                 return Ok(response);
 
             }
@@ -346,6 +363,7 @@ namespace Facturacion.RestApi.Controllers
                 await _unitOfWork.Save();
 
                 response.StatusCode = HttpStatusCode.NoContent;
+                response.Message = "El registro fue eliminado";
                 return Ok(response);
 
             }

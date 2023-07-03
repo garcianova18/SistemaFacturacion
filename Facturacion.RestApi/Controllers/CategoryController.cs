@@ -160,7 +160,7 @@ namespace Facturacion.RestApi.Controllers
                     }
 
                      //verificar si existe una categoria con el id enviado
-                     var existsRegister = await _unitOfWork.Client.Exists(c => c.Id.Equals(CategoryDTO.Id));
+                     var existsRegister = await _unitOfWork.Category.Exists(c => c.Id.Equals(CategoryDTO.Id));
 
                     if (!existsRegister)
                     {
@@ -175,6 +175,7 @@ namespace Facturacion.RestApi.Controllers
 
                     
                     response.StatusCode = HttpStatusCode.NoContent;
+                    response.Message = "El registro ha sido actualizado";
                     
                     return Ok(response);
 
@@ -222,6 +223,7 @@ namespace Facturacion.RestApi.Controllers
                 await _unitOfWork.Save();
     
                     response.StatusCode = HttpStatusCode.NoContent;
+                    response.Message = "Registro eliminado";
                     return Ok(response);
 
                 }

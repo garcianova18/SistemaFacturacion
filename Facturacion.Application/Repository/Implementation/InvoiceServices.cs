@@ -1,4 +1,5 @@
 ﻿using Facturacion.Application.Repository.Interfaces;
+using Facturacion.Domain.DTOs;
 using Facturacion.Domain.Models;
 using Facturacion.Infrastruture.ApplicationDbContext;
 using Microsoft.EntityFrameworkCore;
@@ -53,10 +54,13 @@ namespace Facturacion.Application.Repository.Implementation
                 //actualizar el stock de cada producto
                 var producto = await _unitOfWork.Product.GetByid(details.IdProduct);
                 producto.Stock = producto.Stock - details.Amount;
-                _unitOfWork.Product.Update(producto);
+               
+               _unitOfWork.Product.Update(producto);
+
 
 
             }
+           
 
             //obetener el correlativo para crear numero de la facura
             var GetCorrelative = await _unitOfWork.Correlat.GetByid(1);
@@ -107,6 +111,49 @@ namespace Facturacion.Application.Repository.Implementation
 
             return Product.Stock;
         }
+
+        public async Task< ExistsProducDTO >ExistsProduct( Invoice invoice)
+        {
+
+            int idnotvalid = 0;
+            bool existsProduct = false;
+            
+            foreach (var item in invoice.InvoiceDetails)
+            {
+
+                existsProduct = await _unitOfWork.Product.Exists(d => d.Id == item.IdProduct);
+
+                idnotvalid = item.IdProduct;
+                if (existsProduct is false)
+                {
+                    break;
+                }
+            }
+
+            return new ExistsProducDTO { Id= idnotvalid , IsSuccess = existsProduct};
+        }
+
+        public async Task<ExistsProducDTO> ExistsDetails(Invoice invoice)
+        {
+
+            int idnotvalid = 0;
+            bool existsdetails = false;
+
+            foreach (var item in invoice.InvoiceDetails)
+            {
+
+                existsdetails = await _unitOfWork.InvoiceDetails.Exists(d => d.Id == item.Id);
+
+                idnotvalid = item.Id;
+                if (existsdetails is false)
+                {
+                    break;
+                }
+            }
+
+            return new ExistsProducDTO { Id = idnotvalid, IsSuccess = existsdetails };
+        }
+
 
 
     }

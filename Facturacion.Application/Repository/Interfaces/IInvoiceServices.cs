@@ -1,4 +1,5 @@
-﻿using Facturacion.Domain.Models;
+﻿using Facturacion.Domain.DTOs;
+using Facturacion.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,7 @@ namespace Facturacion.Application.Repository.Interfaces
         Task<Invoice> GetInvoiceByNumber(string InvoiceNumber);
         Task<Invoice> GetInvoiceDetails(int id);
         Task<int> Checkstock(int Id, int Amount);
+        Task<ExistsProducDTO> ExistsProduct(Invoice Invoice);
+        Task<ExistsProducDTO> ExistsDetails(Invoice invoice);
     }
 }

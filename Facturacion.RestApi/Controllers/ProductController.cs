@@ -173,8 +173,9 @@ namespace Facturacion.RestApi.Controllers
                     _unitOfWork.Product.Update(Product);
                     await _unitOfWork.Save();
 
-                    
-                    response.StatusCode = HttpStatusCode.NoContent;
+
+                response.StatusCode = HttpStatusCode.NoContent;
+                response.Message = "El resgisteo se ha actualizado";
                     return Ok(response);
 
                 }
@@ -221,6 +222,7 @@ namespace Facturacion.RestApi.Controllers
                 await _unitOfWork.Save();
 
                 response.StatusCode = HttpStatusCode.NoContent;
+                response.Message = "El resgistro ha sido eliminado";
                       return Ok(response) ;
                 }
                 catch (Exception ex)

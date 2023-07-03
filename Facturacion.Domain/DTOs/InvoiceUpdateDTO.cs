@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Facturacion.Domain.DTOs
@@ -24,6 +25,9 @@ namespace Facturacion.Domain.DTOs
         [Required]
         [MinLength(1,ErrorMessage ="Debes enviar por lo menos un detalle de ventas")]
         public ICollection<InvoiceDetailsUpdateDTO> InvoiceDetails { get; set; }
+
+        [JsonIgnore]
+        public int IdUser { get; set; } = 1;
 
     }
  

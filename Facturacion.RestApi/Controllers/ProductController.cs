@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Facturacion.Application.Repository;
+using Facturacion.Application.Repository.Interfaces;
 using Facturacion.Domain.DTOs;
 using Facturacion.Domain.Models;
 using Microsoft.AspNetCore.Http;

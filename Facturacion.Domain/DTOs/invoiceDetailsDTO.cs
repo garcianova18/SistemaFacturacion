@@ -14,7 +14,6 @@ namespace Facturacion.Domain.DTOs
         public int Id { get; set; }
 
         //propiedad compuesta para realizar mappeo con Automapper
-        [Display(Name = "Product")]
         public string ProductName { get; set; }
         public int Amount { get; set; }
         public decimal Price { get; set; }

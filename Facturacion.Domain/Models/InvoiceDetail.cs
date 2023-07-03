@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Facturacion.Domain.Models
+﻿namespace Facturacion.Domain.Models
 {
     public partial class InvoiceDetail
     {

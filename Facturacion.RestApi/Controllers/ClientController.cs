@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Facturacion.Application.Repository;
+using Facturacion.Application.Repository.Interfaces;
 using Facturacion.Domain.DTOs;
 using Facturacion.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -113,9 +113,7 @@ namespace Facturacion.RestApi.Controllers
                 await _unitOfWork.Client.Add(Client);
                 await _unitOfWork.Save();
 
-                response.Result = ClientDTO;
-                response.StatusCode = HttpStatusCode.Created;   
-
+                response.Result = _mapper.Map<ClientDTO>(Client);
                 return CreatedAtRoute("GetClient", new { id = Client.Id }, response.Result);
             }
             catch (Exception ex)

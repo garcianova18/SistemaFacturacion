@@ -9,7 +9,8 @@ namespace Facturacion.Domain.DTOs
 {
     public class CategoryCreateDTO
     {
-        [Required (ErrorMessage ="el Nombre es obligatirio")]
+        [Required (ErrorMessage ="el {0} es obligatirio")]
+        [StringLength(maximumLength: 50, ErrorMessage = "El maximo de caracteres permitidos para {0} es {1}")]
         public string Name { get; set; }
 
        

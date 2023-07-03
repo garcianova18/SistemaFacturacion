@@ -18,7 +18,7 @@ namespace Facturacion.Domain.Models
         public decimal Itbis { get; set; }
         public decimal Total { get; set; }
 
-        public virtual Client Client { get; set; }
+        public virtual Client Client { get; set;}
         public virtual ICollection<InvoiceDetail> InvoiceDetails { get; set; }
     }
 }

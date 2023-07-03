@@ -5,16 +5,17 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Facturacion.Application.Repository.Interfaces;
 using Facturacion.Domain.Models;
 using Facturacion.Infrastruture.ApplicationDbContext;
 using Microsoft.EntityFrameworkCore;
 
-namespace Facturacion.Application.Repository
+namespace Facturacion.Application.Repository.Implementation
 {
     public class RepositoryGeneric<TEntity> : IRepositoryGeneric<TEntity> where TEntity : class
     {
         private readonly SistemaFacturacionContext _context;
-        private  DbSet<TEntity> _entitites;
+        private DbSet<TEntity> _entitites;
 
         public RepositoryGeneric(SistemaFacturacionContext context)
         {
@@ -25,9 +26,9 @@ namespace Facturacion.Application.Repository
         {
             try
             {
-               await _entitites.AddAsync(entity);
-               
-                
+                await _entitites.AddAsync(entity);
+
+
             }
             catch (Exception)
             {
@@ -43,7 +44,7 @@ namespace Facturacion.Application.Repository
             try
             {
                 _entitites.Remove(entity);
-             
+
 
             }
             catch (Exception)
@@ -52,7 +53,7 @@ namespace Facturacion.Application.Repository
                 throw;
             }
 
-           
+
         }
 
         public async Task<bool> Exists(Expression<Func<TEntity, bool>> filters = null)
@@ -70,7 +71,7 @@ namespace Facturacion.Application.Repository
 
         public async Task<List<TEntity>> GetAll()
         {
-            
+
 
             return await _entitites.ToListAsync();
 
@@ -86,7 +87,7 @@ namespace Facturacion.Application.Repository
             try
             {
                 _context.Entry(entity).State = EntityState.Modified;
-             
+
 
 
             }
@@ -96,23 +97,23 @@ namespace Facturacion.Application.Repository
                 throw;
             }
 
-           
+
         }
 
-       
-       public async Task<int> ExistsUpdate(Expression<Func<TEntity, bool>> filters =null)
+
+        public async Task<int> ExistsUpdate(Expression<Func<TEntity, bool>> filters = null)
         {
             if (filters is null)
             {
                 return 0;
             }
 
-           return  await _entitites.Where(filters).CountAsync();
+            return await _entitites.Where(filters).CountAsync();
 
 
         }
 
-      
+
 
 
     }

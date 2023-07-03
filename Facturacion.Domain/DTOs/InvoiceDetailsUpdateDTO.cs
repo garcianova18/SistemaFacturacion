@@ -10,6 +10,7 @@ namespace Facturacion.Domain.DTOs
     public class InvoiceDetailsUpdateDTO
     {
         [Required]
+        [Range(1, double.MaxValue, ErrorMessage = "El valor de {0} debe ser mayor a 0")]
         public int Id { get; set; }
 
         [Required()]

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Facturacion.Application.Repository;
-using Facturacion.Application.Services;
+using Facturacion.Application.Repository.Implementation;
+using Facturacion.Application.Repository.Interfaces;
 using Facturacion.Domain.DTOs;
 using Facturacion.Domain.Models;
 using Microsoft.AspNetCore.Http;
@@ -147,6 +147,7 @@ namespace Facturacion.RestApi.Controllers
                 {
                     response.IsSuccess = false;
                     response.StatusCode = HttpStatusCode.BadRequest;
+                    response.Message = $"El Id no puede ser cero";
                     return BadRequest(response);
                 }
                 var invoice = await _invoiceServices.GetInvoiceDetails(id);
@@ -155,6 +156,7 @@ namespace Facturacion.RestApi.Controllers
                 {
                     response.IsSuccess = false;
                     response.StatusCode = HttpStatusCode.NotFound;
+                    response.Message = $"No existe una factura con el Id {id}";
                     return NotFound(response);
                 };
 
@@ -182,36 +184,44 @@ namespace Facturacion.RestApi.Controllers
             {
                 if (invoiceCreateDTO is null)
                 {
+                    response.IsSuccess = false;
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    response.Message = $"No existe un cliente con el Id {invoiceCreateDTO.IdClient}";
                     return BadRequest();
                 }
 
-                //Verificar si el cliente enviado existe
+                //Verificar si el cliente con el id enviado existe
                 var existsClient = await _unitOfWork.Client.Exists(c=> c.Id == invoiceCreateDTO.IdClient);
                 if (!existsClient)
                 {
-                    return BadRequest("El cliente no existe");
+                    response.IsSuccess = false;
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    response.Message = $"No existe un cliente con el Id {invoiceCreateDTO.IdClient}";
+                    return BadRequest(response);
                 }
 
-                bool existsProducto = false;
+                bool existsProduct = false;
                 int idnotvalid = 0;
-                //Verificar si el Product enviado existe
+                //Verificar si existe todos los Productos con los id enviado 
                 foreach (var item in invoiceCreateDTO.InvoiceDetails)
                 {
                    
-                   
-                   existsProducto  =  await _unitOfWork.Product.Exists(d => d.Id == item.IdProduct);
+                   existsProduct  =  await _unitOfWork.Product.Exists(d => d.Id == item.IdProduct);
 
                     idnotvalid = item.IdProduct;
-                    if (existsProducto is false)
+                    if (existsProduct is false)
                     {
                         break;
                     }
                 }
 
                 
-                if (!existsProducto)
+                if (!existsProduct)
                 {
-                    return BadRequest($"El Product con id {idnotvalid} no existe");
+                    response.IsSuccess = false;
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    response.Message = $"El Producto con id {idnotvalid} no existe";
+                    return NotFound(response);
                 }
                
 
@@ -249,26 +259,34 @@ namespace Facturacion.RestApi.Controllers
                 {
                     response.StatusCode = HttpStatusCode.BadRequest;
                     response.IsSuccess = false;
-
+                    response.Message = $"El Id {id} no coincide con el Id {invoiceUpdateDTO.Id} ";
                     return BadRequest(response);
                 }
 
               
                 //Verificar si existe una factura con el id enviado
-                var existsRegister = await _unitOfWork.Invoice.Exists(c => c.Id.Equals(invoiceUpdateDTO.Id));
+                var existsInvoice = await _unitOfWork.Invoice.Exists(c => c.Id.Equals(invoiceUpdateDTO.Id));
 
-                if (!existsRegister)
+                if (!existsInvoice)
                 {
                     return NotFound("Este registro no existe en la DB");
                 }
+                //Verificar si existe una factura con el Numero de factura
+                var existsInoviceNumber = await _unitOfWork.Invoice.Exists(c => c.Ninvoice == invoiceUpdateDTO.Ninvoice);
+
+                if (!existsInoviceNumber)
+                {
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    response.IsSuccess = false;
+                    response.Message = $"El Numero de factura no es valido";
+                    return NotFound(response);
+                }
 
                 var InvoiceMapper = _mapper.Map<Invoice>(invoiceUpdateDTO);
+
+                //Realizar las operaciones de la factura y de los detalles
                 var invoice = await _invoiceServices.GetTotalSubtotalTax(InvoiceMapper);
 
-                //foreach (var Details in invoice.InvoiceDetails)
-                //{
-                //    _unitOfWork.InvoiceDetails.Update(Details);
-                //}
 
                 
                 _unitOfWork.Invoice.Update(invoice);
@@ -289,8 +307,6 @@ namespace Facturacion.RestApi.Controllers
             return response;
 
         
-        
-        
         }
 
         [HttpDelete("{id:int}")]
@@ -306,6 +322,7 @@ namespace Facturacion.RestApi.Controllers
                 {
                     response.IsSuccess = false;
                     response.StatusCode = HttpStatusCode.BadRequest;
+                    response.Message = $"El {id} tiene que ser mayor a 0";
                     return BadRequest(response);
                 }
 
@@ -314,7 +331,10 @@ namespace Facturacion.RestApi.Controllers
 
                 if (ExistsInvoice is null)
                 {
-                    return NotFound();
+                    response.StatusCode = HttpStatusCode.NoContent;
+                    response.IsSuccess = false;
+                    response.Message = $"No existe un registro con el Id {id}";
+                    return NotFound(response);
                 }
 
                 _unitOfWork.Invoice.Delete(ExistsInvoice);

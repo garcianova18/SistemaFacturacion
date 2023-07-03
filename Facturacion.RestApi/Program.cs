@@ -1,10 +1,10 @@
 using Facturacion.Domain.Models;
 using Facturacion.Infrastruture.ApplicationDbContext;
 using Microsoft.EntityFrameworkCore;
-using Facturacion.Application.Repository;
 using Facturacion.Application.Mapping;
-using Facturacion.Application.Services;
 using System.Text.Json.Serialization;
+using Facturacion.Application.Repository.Interfaces;
+using Facturacion.Application.Repository.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Facturacion.Application.Repository;
+using Facturacion.Application.Repository.Interfaces;
 using Facturacion.Domain.DTOs;
 using Facturacion.Domain.Models;
 using Microsoft.AspNetCore.Http;
@@ -114,10 +114,11 @@ namespace Facturacion.RestApi.Controllers
 
                     await _unitOfWork.Category.Add(Category);
                     await _unitOfWork.Save();
-                
-                    response.Result = CategoryDTO;
-                    response.StatusCode = HttpStatusCode.Created;
 
+
+
+
+                    response.Result = _mapper.Map<CategoryDTO>(Category);
                     return CreatedAtRoute("GetCategory", new { id = Category.Id }, response.Result);
                 }
                 catch (Exception ex)
@@ -171,7 +172,7 @@ namespace Facturacion.RestApi.Controllers
 
                     
                     response.StatusCode = HttpStatusCode.NoContent;
-
+                    
                     return Ok(response);
 
                 }

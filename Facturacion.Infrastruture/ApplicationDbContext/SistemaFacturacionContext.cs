@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Facturacion.Infrastruture.ApplicationDbContext
 {
-
     public partial class SistemaFacturacionContext : DbContext
     {
         public SistemaFacturacionContext()
@@ -19,6 +18,7 @@ namespace Facturacion.Infrastruture.ApplicationDbContext
 
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Client> Clients { get; set; }
+        public virtual DbSet<Correlative> Correlatives { get; set; }
         public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<InvoiceDetail> InvoiceDetails { get; set; }
         public virtual DbSet<Product> Products { get; set; }
@@ -72,6 +72,13 @@ namespace Facturacion.Infrastruture.ApplicationDbContext
                     .IsRequired()
                     .HasMaxLength(14)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Correlative>(entity =>
+            {
+                entity.ToTable("Correlative");
+
+                entity.Property(e => e.DateCreate).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<Invoice>(entity =>
@@ -150,4 +157,5 @@ namespace Facturacion.Infrastruture.ApplicationDbContext
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
+
 }

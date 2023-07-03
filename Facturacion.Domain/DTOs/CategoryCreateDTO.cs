@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Facturacion.Domain.DTOs
@@ -13,7 +14,10 @@ namespace Facturacion.Domain.DTOs
         [StringLength(maximumLength: 50, ErrorMessage = "El maximo de caracteres permitidos para {0} es {1}")]
         public string Name { get; set; }
 
-       
+        [JsonIgnore]
+        public bool? Status { get; set; } = true;
+
+
 
     }
 }

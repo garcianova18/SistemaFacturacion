@@ -26,6 +26,8 @@ namespace Facturacion.Domain.DTOs
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = " {0} debe de ser mayor a 0}")]
         public int Stock { get; set; }
+
+        public bool? Status { get; set; } = true;
     }
         
 }

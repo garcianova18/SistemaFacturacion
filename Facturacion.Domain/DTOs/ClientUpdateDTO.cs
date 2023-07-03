@@ -38,5 +38,8 @@ namespace Facturacion.Domain.DTOs
         [Required(ErrorMessage = "El Campo {0} es obligatorio")]
         [StringLength(50)]
         public string Dni { get; set; }
+
+
+        public bool? Status { get; set; } = true;
     }
 }

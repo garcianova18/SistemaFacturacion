@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
 using Facturacion.Application.Repository.Interfaces;
+using Facturacion.Application.Utilities;
 using Facturacion.Domain.DTOs;
 using Facturacion.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace Facturacion.RestApi.Controllers
 {
+    [Authorize]
     [Route("api/[Controller]")]
     [ApiController]
     public class ClientController : ControllerBase
@@ -203,7 +206,9 @@ namespace Facturacion.RestApi.Controllers
                     return NotFound();
                 }
 
-                _unitOfWork.Client.Delete(ExistsClient);
+                //borrado Logico, no podemos eliminar Registro de tabla relacionadas para no crear inconsistencia de los datos
+                ExistsClient.Status = false;
+                _unitOfWork.Client.Update(ExistsClient);
                 await _unitOfWork.Save();
 
                 response.StatusCode = HttpStatusCode.NoContent;

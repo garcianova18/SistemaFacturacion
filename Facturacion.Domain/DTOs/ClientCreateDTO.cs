@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Facturacion.Domain.DTOs
@@ -32,5 +33,8 @@ namespace Facturacion.Domain.DTOs
         public string Email { get; set; }
 
         public string Dni { get; set; }
+
+        [JsonIgnore]
+        public bool? Status { get; set; } = true;
     }
 }

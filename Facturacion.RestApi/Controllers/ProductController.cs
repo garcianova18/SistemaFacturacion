@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
 using Facturacion.Application.Repository.Interfaces;
+using Facturacion.Application.Utilities;
 using Facturacion.Domain.DTOs;
 using Facturacion.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace Facturacion.RestApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
@@ -212,10 +215,12 @@ namespace Facturacion.RestApi.Controllers
                     return NotFound(response);
                     }
 
-                    _unitOfWork.Product.Delete(ExistsProduct);
-                    await _unitOfWork.Save();
+                //borrado Logico, no podemos eliminar Registro de tabla relacionadas para no crear inconsistencia de los datos
+                ExistsProduct.Status = false;
+                _unitOfWork.Product.Update(ExistsProduct);
+                await _unitOfWork.Save();
 
-                    response.StatusCode = HttpStatusCode.NoContent;
+                response.StatusCode = HttpStatusCode.NoContent;
                       return Ok(response) ;
                 }
                 catch (Exception ex)

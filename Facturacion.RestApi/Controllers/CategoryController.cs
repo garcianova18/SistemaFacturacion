@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
 using Facturacion.Application.Repository.Interfaces;
+using Facturacion.Application.Utilities;
 using Facturacion.Domain.DTOs;
 using Facturacion.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace Facturacion.RestApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -213,7 +216,7 @@ namespace Facturacion.RestApi.Controllers
 
 
 
-                //borrado Logico
+                //borrado Logico, no podemos eliminar Registro de tabla relacionadas para no crear inconsistencia de los datos
                  ExistsCategory.Status = false;
                 _unitOfWork.Category.Update(ExistsCategory);
                 await _unitOfWork.Save();

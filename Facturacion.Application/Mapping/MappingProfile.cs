@@ -35,6 +35,9 @@ namespace Facturacion.Application.Mapping
             CreateMap<Category, CategoryCreateDTO>().ReverseMap();
             CreateMap<Category, CategoryUpdateDTO>().ReverseMap();
 
+
+            CreateMap<User, UserDTO>().ReverseMap();
+
         }
     }
 }

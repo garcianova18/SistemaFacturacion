@@ -17,7 +17,7 @@ namespace Facturacion.Domain.DTOs
         [StringLength(maximumLength: 50, ErrorMessage = "El maximo de caracteres permitidos para {0} es {1}")]
         public string Name { get; set; }
 
-        public bool Status { get; set; }
+        public bool Status { get; set; } = true;
 
     }
 }

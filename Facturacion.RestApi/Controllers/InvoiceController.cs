@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Facturacion.Application.Repository.Implementation;
 using Facturacion.Application.Repository.Interfaces;
+using Facturacion.Application.Utilities;
 using Facturacion.Domain.DTOs;
 using Facturacion.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -10,6 +12,7 @@ using System.Net;
 
 namespace Facturacion.RestApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class InvoiceController : ControllerBase
@@ -226,6 +229,8 @@ namespace Facturacion.RestApi.Controllers
                
 
                 var invoiceMapper = _mapper.Map<Invoice>(invoiceCreateDTO);
+
+                //Realizar las operaciones de la factura y de los detalles
                 var invoice = await _invoiceServices.GetTotalSubtotalTax(invoiceMapper);
 
                 await _unitOfWork.Invoice.Add(invoice);

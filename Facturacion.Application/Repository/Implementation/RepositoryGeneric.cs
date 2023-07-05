@@ -27,7 +27,7 @@ namespace Facturacion.Application.Repository.Implementation
             try
             {
                 await _entitites.AddAsync(entity);
-
+                return entity;
 
             }
             catch (Exception)
@@ -36,7 +36,7 @@ namespace Facturacion.Application.Repository.Implementation
                 throw;
             }
 
-            return entity;
+            
         }
 
         public void Delete(TEntity entity)

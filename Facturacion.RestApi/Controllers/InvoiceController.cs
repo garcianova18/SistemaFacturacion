@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
-using Facturacion.Application.Repository.Implementation;
 using Facturacion.Application.Repository.Interfaces;
 using Facturacion.Application.Utilities;
 using Facturacion.Domain.DTOs;
 using Facturacion.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Net;
 
 namespace Facturacion.RestApi.Controllers
@@ -69,6 +66,7 @@ namespace Facturacion.RestApi.Controllers
                 {
                     response.IsSuccess = false;
                     response.StatusCode = HttpStatusCode.BadRequest;
+                    response.Message = "El id debe de ser mayor a cero";
                     return BadRequest(response);
                 }
                 var invoice = await _unitOfWork.Invoice.GetByid(id);
@@ -77,6 +75,7 @@ namespace Facturacion.RestApi.Controllers
                 {
                     response.IsSuccess = false;
                     response.StatusCode = HttpStatusCode.NotFound;
+                    response.Message = $"No existe un registro con el Id {id}";
                     return NotFound(response);
                 };
 
@@ -94,28 +93,31 @@ namespace Facturacion.RestApi.Controllers
             }
             return response;
         }
+        
 
-        [HttpGet("InvoiceNumber")]
+        [HttpGet("InvoiceNumber/{number}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ApiResponse>> Get(string nombre)
+        public async Task<ActionResult<ApiResponse>> Get(string number)
         {
             try
             {
 
-                if (string.IsNullOrEmpty(nombre))
+                if (string.IsNullOrEmpty(number))
                 {
                     response.IsSuccess = false;
                     response.StatusCode = HttpStatusCode.BadRequest;
+                    response.Message = $"Debes enviar el numero de factura";
                     return BadRequest(response);
                 }
-                var invoice = await _invoiceServices.GetInvoiceByNumber(nombre);
+                var invoice = await _invoiceServices.GetInvoiceByNumber(number);
 
                 if (invoice is null)
                 {
                     response.IsSuccess = false;
                     response.StatusCode = HttpStatusCode.NotFound;
+                    response.Message = $"Este {number} de factura no existe";
                     return NotFound(response);
                 };
 
@@ -133,8 +135,6 @@ namespace Facturacion.RestApi.Controllers
             }
             return response;
         }
-
-
 
 
         [HttpGet("GetDetails/{id:int}")]

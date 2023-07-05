@@ -44,6 +44,7 @@ namespace Facturacion.RestApi.Controllers
 
             }
 
+            //Generar token
             var Token = GenerateToken(Admin);
 
 

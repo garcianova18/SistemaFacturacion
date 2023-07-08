@@ -216,11 +216,13 @@ namespace Facturacion.RestApi.Controllers
                     response.Message = $"El Producto con id {existsProduct.Id} no existe";
                     return NotFound(response);
                 }
-               
 
+               
 
                 //Realizar las operaciones de la factura y de los detalles
                 var invoice = await _invoiceServices.GetTotalSubtotalTax(invoiceMapper);
+
+                
 
                 await _unitOfWork.Invoice.Add(invoice);
                 await _unitOfWork.Save();
@@ -257,30 +259,18 @@ namespace Facturacion.RestApi.Controllers
                     return BadRequest(response);
                 }
 
-              
-                //Verificar si existe una factura con el id enviado
-                var existsInvoice = await _unitOfWork.Invoice.Exists(c => c.Id.Equals(invoiceUpdateDTO.Id));
 
-                if (!existsInvoice)
+                //Obtener la factura para  asignarle el # de factura al modelo a actualizar
+                var GetInvoice = await _invoiceServices.GetInvoiceAsNotraking(invoiceUpdateDTO.Id);
+
+                if (GetInvoice is null)
                 {
-                    return NotFound("Este registro no existe en la DB");
+                    return NotFound($"No existe una factura con Id {invoiceUpdateDTO.Id}");
                 }
-                //Verificar si existe una factura con el Numero de factura
-                var existsInoviceNumber = await _unitOfWork.Invoice.Exists(c => c.Ninvoice == invoiceUpdateDTO.Ninvoice);
-
-                if (!existsInoviceNumber)
-                {
-                    response.StatusCode = HttpStatusCode.NotFound;
-                    response.IsSuccess = false;
-                    response.Message = $"El Numero de factura no es valido";
-                    return NotFound(response);
-                }
-
-              
 
                 var InvoiceMapper = _mapper.Map<Invoice>(invoiceUpdateDTO);
-
-
+                         InvoiceMapper.Ninvoice = GetInvoice.Ninvoice;
+                   
                 //Verificar si existe todos los Productos con los id enviado 
                 var existsProduct = await _invoiceServices.ExistsProduct(InvoiceMapper);
 
@@ -292,7 +282,7 @@ namespace Facturacion.RestApi.Controllers
                     return NotFound(response);
                 }
 
-                //Verificar si existe todos los Productos con los id enviado 
+                //Verificar si existe todos los Detalles con los id enviado 
                 var existsDetails = await _invoiceServices.ExistsDetails(InvoiceMapper);
 
                 if (!existsDetails.IsSuccess)
@@ -310,7 +300,7 @@ namespace Facturacion.RestApi.Controllers
 
                 
                 _unitOfWork.Invoice.Update(invoice);
-                
+               
                 await _unitOfWork.Save();
 
                 response.StatusCode = HttpStatusCode.NoContent;

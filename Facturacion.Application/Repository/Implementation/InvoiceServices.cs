@@ -31,7 +31,7 @@ namespace Facturacion.Application.Repository.Implementation
             string InvoiceNumber = Digit + LastInvoiceNumber.ToString();
 
             //indicamos la cantidad de digitos a eliminar a la izqierda
-            //para mostrar para el numero de la factura de solo 6 digitos
+            //para crear el numero de la factura de solo 6 digitos
             InvoiceNumber = InvoiceNumber.Substring(InvoiceNumber.Length - AmountDigit, AmountDigit);
 
 
@@ -41,42 +41,49 @@ namespace Facturacion.Application.Repository.Implementation
 
         public async Task<Invoice> GetTotalSubtotalTax(Invoice Invoice)
         {
-            //----------agregar datos a los detalles de la factura---------------//
+            //========agregar o actualizar los detalles de la factura---------------//
+
             foreach (var details in Invoice.InvoiceDetails)
             {
                 //obtener el precio de cada producto
-                var getPorduct = await _unitOfWork.Product.GetByid(details.IdProduct);
+                var product = await _unitOfWork.Product.GetByid(details.IdProduct);
 
                 // calcular total de los detalles
-                details.Price = getPorduct.Price;
-                details.Total = details.Amount * getPorduct.Price - details.Discount;
+                details.Price = product.Price;
+                details.Total = details.Amount * product.Price - details.Discount;
 
                 //actualizar el stock de cada producto
-                var producto = await _unitOfWork.Product.GetByid(details.IdProduct);
-                producto.Stock = producto.Stock - details.Amount;
-               
-               _unitOfWork.Product.Update(producto);
+                product.Stock = product.Stock - details.Amount;
+                _unitOfWork.Product.Update(product);
 
+                //si entra aqui vamos a actualizar los detalles de la factura
+                if (Invoice.Id !=0)
+                {
+                    _unitOfWork.InvoiceDetails.Update(details);
+                }
 
+              
 
             }
            
+            //==================Correlativo Crear numero de fasctura ==============//
 
-            //obetener el correlativo para crear numero de la facura
-            var GetCorrelative = await _unitOfWork.Correlat.GetByid(1);
-
-            GetCorrelative.LastNumber++;
-            GetCorrelative.DateCreate = DateTime.Now;
-            _unitOfWork.Correlat.Update(GetCorrelative);
-
-            //--------agregra datos a la factura----------------//
-
-            //Si Ninvoice no trae un numero se esta creando una factura de lo contrario se esta actuaizando
+            //Si entra aqui estamos creando una factura de lo contrario estamos actualizando
             if (Invoice.Ninvoice == string.Empty || Invoice.Ninvoice is null)
             {
-                //crear numero de factura
+                //obetener el ultimo numero de factura creado 
+                var GetCorrelative = await _unitOfWork.Correlat.GetByid(1);
+
+                GetCorrelative.LastNumber++;
+                GetCorrelative.DateCreate = DateTime.Now;
+                _unitOfWork.Correlat.Update(GetCorrelative);
+
+                //agregar el numero de factura a la factura
                 Invoice.Ninvoice = CreateInvoiceNumber(GetCorrelative.LastNumber);
             }
+
+            //===========agregar o actualizar la cabecera de la factura===================//
+            
             Invoice.Total = Invoice.InvoiceDetails.Sum(x => x.Total);
             Invoice.Itbis = Invoice.Total * 0.18M;
             Invoice.SubTotal = Invoice.Total - Invoice.Itbis;
@@ -100,16 +107,16 @@ namespace Facturacion.Application.Repository.Implementation
 
         }
 
-        public async Task<int> Checkstock(int Id, int Amount)
+        public async Task<bool> Checkstock(int Id, int Amount)
         {
             var Product = await _context.Products.FindAsync(Id);
 
             if (Product.Stock < Amount)
             {
-                return 0;
+                return false;
             }
 
-            return Product.Stock;
+            return true;
         }
 
         public async Task< ExistsProducDTO >ExistsProduct( Invoice invoice)
@@ -152,6 +159,13 @@ namespace Facturacion.Application.Repository.Implementation
             }
 
             return new ExistsProducDTO { Id = idnotvalid, IsSuccess = existsdetails };
+        }
+
+        public async Task<Invoice> GetInvoiceAsNotraking(int id)
+        {
+
+            return await _context.Invoices.AsNoTracking().FirstOrDefaultAsync(x=> x.Id == id);
+
         }
 
 

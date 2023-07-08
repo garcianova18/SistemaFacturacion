@@ -22,7 +22,7 @@ namespace Facturacion.Application.Repository.Implementation
         public async Task<User> GetAdmin(User user)
         {
 
-            return await _context.Users.FirstOrDefaultAsync(e=>e.Email == user.Email && e.Password ==user.Password);
+            return await _context.Users.Include(r=> r.Rol).FirstOrDefaultAsync(e=>e.Email == user.Email && e.Password ==user.Password);
         }
 
     }

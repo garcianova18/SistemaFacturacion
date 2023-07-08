@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddControllers().AddJsonOptions(op =>
 {
 
     op.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    op.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -40,6 +42,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateIssuer = false,
         ValidateAudience = false,
     };
+});
+
+builder.Services.AddAuthorization(op =>
+{
+    op.AddPolicy("Poliadmin", policy => policy.RequireRole("Admin"));
+
 });
 
 builder.Services.AddSwaggerGen(op =>

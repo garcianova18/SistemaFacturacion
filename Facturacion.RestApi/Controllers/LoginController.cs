@@ -60,7 +60,8 @@ namespace Facturacion.RestApi.Controllers
             {
 
                 new Claim(ClaimTypes.Name, user.FirstName),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Rol.RolName)
             };
 
             //Obtenemos La llave

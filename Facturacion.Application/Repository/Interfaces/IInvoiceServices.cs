@@ -1,10 +1,5 @@
 ﻿using Facturacion.Domain.DTOs;
 using Facturacion.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Facturacion.Application.Repository.Interfaces
 {
@@ -14,8 +9,9 @@ namespace Facturacion.Application.Repository.Interfaces
         string CreateInvoiceNumber(int Number);
         Task<Invoice> GetInvoiceByNumber(string InvoiceNumber);
         Task<Invoice> GetInvoiceDetails(int id);
-        Task<int> Checkstock(int Id, int Amount);
+        Task<bool> Checkstock(int Id, int Amount);
         Task<ExistsProducDTO> ExistsProduct(Invoice Invoice);
         Task<ExistsProducDTO> ExistsDetails(Invoice invoice);
+        Task<Invoice> GetInvoiceAsNotraking(int id);
     }
 }

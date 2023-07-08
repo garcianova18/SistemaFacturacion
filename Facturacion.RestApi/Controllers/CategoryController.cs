@@ -151,7 +151,7 @@ namespace Facturacion.RestApi.Controllers
                         return BadRequest(response);
                     }
 
-                    //verificar si existe una ategoria con el mismo nombre
+                    //verificar si existe una categoria con el mismo nombre
                     var existsCategory = await _unitOfWork.Category.ExistsUpdate(c => c.Name == CategoryDTO.Name && c.Id != CategoryDTO.Id);
 
                     if (existsCategory >= 1)

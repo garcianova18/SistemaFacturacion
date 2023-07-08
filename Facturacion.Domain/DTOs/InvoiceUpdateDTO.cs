@@ -15,8 +15,8 @@ namespace Facturacion.Domain.DTOs
         [Range(1, double.MaxValue, ErrorMessage = "el {0 } no puede tener valor 0")]
         public int Id { get; set; }
 
-        [Required (ErrorMessage ="El Numero de la Factura es obligatiro")]
-        public string Ninvoice { get; set; }
+        //[Required (ErrorMessage ="El {0} de la Factura es obligatiro")]
+        //public string Ninvoice { get; set; }
 
         [Required]
         [Range(1, double.MaxValue, ErrorMessage = "el {0 } no puede tener valor 0")]
